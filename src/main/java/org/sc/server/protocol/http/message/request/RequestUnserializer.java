@@ -1,5 +1,8 @@
 package org.sc.server.protocol.http.message.request;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +18,7 @@ import org.sc.server.utils.ByteArrayConsumerListener;
 
 public class RequestUnserializer {
 
-	public HttpRequest unserialize( byte [] data ) {
+	public HttpRequest unserialize( SocketChannel source, byte [] data ) {
 		
 		ByteArrayConsumer consumer = new ByteArrayConsumer();
 		
@@ -31,6 +34,9 @@ public class RequestUnserializer {
 		consumer.consume( data );
 		
 		HttpRequest request = new HttpRequest( requestConsumer.getCommand(), requestConsumer.getResource(), requestConsumer.getVersion() );
+		completeRemote( source, request );
+		
+		
 		for (Entry<String, String> entry : headerConsumer.getHeaders().entrySet() ) {
 			Header header = GenericHeader.getFromCode( entry.getKey() );
 			if ( header == null ) header = RequestHeader.getFromCode( entry.getKey() );
@@ -42,6 +48,18 @@ public class RequestUnserializer {
 		
 	}
 	
+	private void completeRemote(SocketChannel source, HttpRequest request) {
+		try {
+			if ( source.getRemoteAddress() instanceof InetSocketAddress ) {
+				InetSocketAddress inetSocket = (InetSocketAddress) source.getRemoteAddress();
+				request.setRemoteHost( inetSocket.getHostString() );
+				request.setRemotePort( inetSocket.getPort() );
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	private static class DataConsumer implements ByteArrayConsumerListener {
 
 		private Byte previousTrigger = '\n';
@@ -61,11 +79,11 @@ public class RequestUnserializer {
 		@Override
 		public void onTrigger(byte trigger, byte[] buffer) {
 			
-			if ( currentConsumer == null ) this.currentConsumer = requestConsumer;
-			
+			if ( currentConsumer == null )      this.currentConsumer = requestConsumer;
 			if ( this.currentConsumer != null ) this.currentConsumer.onTrigger(trigger, buffer);
 			
 			if ( shouldGoNext( this.previousTrigger, trigger ) ) nextConsumer();	
+			
 			this.previousTrigger = trigger;
 			
 		}

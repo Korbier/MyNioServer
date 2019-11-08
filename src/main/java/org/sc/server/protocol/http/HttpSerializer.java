@@ -1,5 +1,7 @@
 package org.sc.server.protocol.http;
 
+import java.nio.channels.SocketChannel;
+
 import org.sc.server.protocol.Serializer;
 import org.sc.server.protocol.http.message.request.HttpRequest;
 import org.sc.server.protocol.http.message.request.RequestUnserializer;
@@ -17,8 +19,8 @@ public class HttpSerializer implements Serializer<HttpRequest, HttpResponse> {
 	}
 
 	@Override
-	public HttpRequest unserialize(byte[] data) {
-		return this.requestUnserializer.unserialize( data );
+	public HttpRequest unserialize(SocketChannel source, byte[] data) {
+		return this.requestUnserializer.unserialize( source, data );
 	}
 
 }

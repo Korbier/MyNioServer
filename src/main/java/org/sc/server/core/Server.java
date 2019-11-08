@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.sc.server.configuration.InstanceConfiguration;
 
+import com.google.common.flogger.FluentLogger;
+
 public class Server {
 
+	private static final FluentLogger LOGGER = FluentLogger.forEnclosingClass();
+	
 	private List<Instance> instances = new ArrayList<>();
 	
 	public int createInstance( InstanceConfiguration configuration ) {
@@ -35,6 +39,7 @@ public class Server {
 	
 	private void run() {
 		for ( Instance instance : this.instances ) {
+			LOGGER.atInfo().log("Starting instance : %s", instance);
 			instance.start();
 		}		
 	}

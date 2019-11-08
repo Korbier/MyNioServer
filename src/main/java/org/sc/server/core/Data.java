@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 public class Data {
 
-	private ByteBuffer bBuffer   = null;
+	private ByteBuffer bBuffer = null;
 	
 	public Data( byte [] rawData ) {
 		this.bBuffer   = ByteBuffer.wrap( rawData );

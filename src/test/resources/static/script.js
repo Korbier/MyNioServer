@@ -1,0 +1,1 @@
+console.log('TEST INCLUDE JS');

@@ -16,9 +16,9 @@ public class Bootstrap {
 		HttpProtocol protocol = new HttpProtocol();
 		protocol.setHandler( new StaticHandler( Paths.get( "src/test/resources/static" ) ) );
 		
-		
 		server.createInstance( new InstanceConfiguration( "localhost", 8081, protocol ) );
 		server.startup();
+		
 	}
 	
 }

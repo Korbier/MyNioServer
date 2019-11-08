@@ -26,7 +26,7 @@ public class HttpProtocol extends Protocol<HttpRequest, HttpResponse> {
 	
 	@Override
 	protected HttpResponse getResponse(HttpRequest request) {
-		
+	
 		for ( IExtension extension : getExtensions() ) {
 			extension.updateRequest( request );
 		}
@@ -34,6 +34,7 @@ public class HttpProtocol extends Protocol<HttpRequest, HttpResponse> {
 		try {
 			
 			byte [] responseContent = this.handler.handle( request );
+			
 			if ( responseContent == null ) {
 				return HttpResponse.error500( request.getVersion() );
 			}

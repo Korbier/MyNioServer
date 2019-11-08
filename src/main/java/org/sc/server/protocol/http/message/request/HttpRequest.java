@@ -9,6 +9,9 @@ import org.sc.server.protocol.http.message.Message;
 
 public class HttpRequest extends Message implements Request {
 	
+	private String      remoteHost = null;	
+	private int         remotePort = -1;
+	
 	private Command     command  = null;
 	private String      resource = null;
 	private HttpVersion version  = null;
@@ -23,6 +26,9 @@ public class HttpRequest extends Message implements Request {
 		
 		this( request.getCommand(), request.getResource(), request.getVersion() );
 		
+		this.setRemoteHost( request.getRemoteHost() );
+		this.setRemotePort( request.getRemotePort() );
+		
 		for ( Header header : request.getHeaders() ) {
 			this.setHeaderValue(header, request.getHeaderValue( header ) );
 		}
@@ -31,6 +37,22 @@ public class HttpRequest extends Message implements Request {
 			this.setEntityValue(entity, request.getEntityValue( entity ) );
 		}
 		
+	}
+	
+	public void setRemoteHost( String remoteHost ) {
+		this.remoteHost = remoteHost;
+	}
+	
+	public String getRemoteHost() {
+		return this.remoteHost;
+	}
+	
+	public void setRemotePort( int remotePort ) {
+		this.remotePort = remotePort;
+	}
+	
+	public int getRemotePort() {
+		return this.remotePort;
 	}
 	
 	public Command getCommand() {
@@ -45,5 +67,9 @@ public class HttpRequest extends Message implements Request {
 		return this.version;
 	}
 	
+	@Override
+	public String toString() {
+		return getRemoteHost() + ":" + getRemotePort() + " " + getCommand() + " " + getResource();
+	}
 	
 }

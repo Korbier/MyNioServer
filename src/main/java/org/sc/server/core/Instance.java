@@ -59,4 +59,9 @@ public class Instance {
 		return this.worker.isRunning() && this.server.isRunning();
 	}
 	
+	@Override
+	public String toString() {
+		return getConfiguration().getHost() + ":" + getConfiguration().getPort() + " (" + getConfiguration().getWorker().getClass().getCanonicalName() + ")";
+	}
+	
 }

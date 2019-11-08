@@ -68,10 +68,12 @@ public class ServerThread implements Runnable {
 					while (changes.hasNext()) {
 						ChangeRequest change = (ChangeRequest) changes.next();
 						SelectionKey  key    = change.socket.keyFor( this.selector );
-						switch (change.type) {
-							case ChangeRequest.CHANGEOPS:
-								key.interestOps(change.ops);
-								break;
+						if ( key != null && key.isValid() ) {
+							switch (change.type) {
+								case ChangeRequest.CHANGEOPS:
+									key.interestOps(change.ops);
+									break;
+							}
 						}
 					}
 					this.changeRequests.clear();
@@ -212,7 +214,7 @@ public class ServerThread implements Runnable {
 				} else {
 					queue.remove(0);
 				}
-				
+
 			}
 
 			if ( queue.isEmpty() && socketChannel.isOpen() ) {

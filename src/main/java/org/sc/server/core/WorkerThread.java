@@ -69,16 +69,11 @@ public class WorkerThread implements Runnable {
 				
 			}
 
-			// process data
-			Data result = this.worker.process( event );
-			
-			//Returning data to source channel
-			getInstance().getServerThread().send( event.getSource(), result );
+			//Returning processed data to source channel
+			getInstance().getServerThread().send( event.getSource(), this.worker.process( event ) );
 			
 		}
 		
-		System.out.println("WThread stopped");
-		
 	}
-
+	
 }

@@ -4,6 +4,8 @@ import org.sc.server.core.Data;
 import org.sc.server.core.ServerEvent;
 import org.sc.server.core.Worker;
 
+import com.google.common.flogger.FluentLogger;
+
 /**
  * Protocol base sur un systeme de request - response (http par exemple)
  * 
@@ -12,7 +14,8 @@ import org.sc.server.core.Worker;
  */
 public abstract class Protocol<Q extends Request, S extends Response> implements Worker {
 
-    private Serializer<Q, S> serializer = null;
+	private static final FluentLogger LOGGER = FluentLogger.forEnclosingClass();
+	private Serializer<Q, S> serializer = null;
 
     public Protocol( Serializer<Q, S> serializer ) {
         this.serializer = serializer;
@@ -23,10 +26,10 @@ public abstract class Protocol<Q extends Request, S extends Response> implements
     }
     
 	@Override
-    public Data process( ServerEvent data ) {
+    public Data process( ServerEvent event ) {
        
-		Q request  = getSerializer().unserialize( data.getData() );
-        S response = getResponse( request );
+		Q request  = getSerializer().unserialize( event.getSource(), event.getData() );
+        S response = processRequest( request );
         
         return new Data( getSerializer().serialize( response ) );
 
@@ -34,4 +37,16 @@ public abstract class Protocol<Q extends Request, S extends Response> implements
 
     protected abstract S getResponse( Q request );
 
+    private S processRequest( Q request ) {
+    	
+    	long start = System.nanoTime();
+    	
+    	try {
+    		return getResponse( request );
+    	} finally {
+			LOGGER.atFine().log( "%s %dms", request, (System.nanoTime() - start) / 1000000);
+		}
+    	
+    }
+    
 }
