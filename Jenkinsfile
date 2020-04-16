@@ -11,6 +11,11 @@ pipeline {
         } 
     }
     
+    triggers {
+        cron('0 23 * * *')        
+    }
+
+    
     stages {
         stage('dependencies') {
             steps {
