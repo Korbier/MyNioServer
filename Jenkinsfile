@@ -2,7 +2,7 @@ pipeline {
     agent { 
         docker { 
             image 'maven:alpine'
-            args '-v /home/maven:var/maven'
+            args '-v /home/maven:/var/maven'
             reuseNode true 
         } 
     }
