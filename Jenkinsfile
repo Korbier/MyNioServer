@@ -2,8 +2,6 @@ pipeline {
     agent { 
         docker { 
             image 'maven:alpine'
-            args '-v /home/maven:/root/.m2'
-            reuseNode true 
         } 
     }
     stages {
